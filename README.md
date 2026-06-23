@@ -154,7 +154,7 @@ FUTURE ENHANCEMENTS
 
 AUTHOR
 
-Dhanush K R
+D DHANUSH KUMAR REDDY
 
 This project demonstrates:
 - Spring Boot backend development
