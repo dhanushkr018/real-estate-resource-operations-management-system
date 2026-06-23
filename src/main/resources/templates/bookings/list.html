@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Bookings')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container my-4">
+    <h4 class="fw-bold mb-3">Bookings</h4>
+    <div class="table-responsive">
+        <table class="table table-soft align-middle bg-white rounded-3 shadow-sm">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Property</th>
+                    <th>Customer</th>
+                    <th>Amount (₹)</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th sec:authorize="hasAnyRole('ADMIN','AGENT')">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="b : ${bookings}">
+                    <td th:text="${b.id}"></td>
+                    <td th:text="${b.property.title}"></td>
+                    <td th:text="${b.customer.fullName}"></td>
+                    <td th:text="${#numbers.formatDecimal(b.bookingAmount, 0, 'COMMA', 0, 'POINT')}"></td>
+                    <td>
+                        <span class="badge"
+                              th:class="${b.status.name() == 'CONFIRMED'} ? 'badge bg-success' : (${b.status.name() == 'CANCELLED'} ? 'badge bg-danger' : 'badge bg-warning text-dark')"
+                              th:text="${b.status}"></span>
+                    </td>
+                    <td th:text="${#temporals.format(b.bookingDate, 'dd-MMM-yyyy HH:mm')}"></td>
+                    <td sec:authorize="hasAnyRole('ADMIN','AGENT')">
+                        <form th:action="@{/bookings/{id}/status(id=${b.id})}" method="post" class="d-flex gap-1">
+                            <select name="status" class="form-select form-select-sm">
+                                <option value="PENDING">PENDING</option>
+                                <option value="CONFIRMED">CONFIRMED</option>
+                                <option value="CANCELLED">CANCELLED</option>
+                                <option value="COMPLETED">COMPLETED</option>
+                            </select>
+                            <button class="btn btn-sm btn-outline-success">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${bookings.isEmpty()}">
+                    <td colspan="7" class="text-center text-muted">No bookings yet.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

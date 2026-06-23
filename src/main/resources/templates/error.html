@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Error')}"></head>
+<body>
+<div class="container text-center my-5">
+    <i class="fa-solid fa-triangle-exclamation fa-3x text-warning mb-3"></i>
+    <h4 th:text="${errorMessage}">Something went wrong</h4>
+    <a href="/dashboard" class="btn btn-primary-custom mt-3">Back to Dashboard</a>
+</div>
+</body>
+</html>

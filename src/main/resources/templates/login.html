@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Login')}"></head>
+<body>
+<div class="container">
+    <div class="card auth-card">
+        <div class="card-body p-4">
+            <div class="text-center mb-4">
+                <i class="fa-solid fa-building-circle-check fa-2x" style="color:#1a4d2e"></i>
+                <h3 class="fw-bold mt-2" style="color:#1a4d2e">RealtyOps</h3>
+                <p class="text-muted">Real Estate Resource &amp; Operations Management</p>
+            </div>
+
+            <div class="alert alert-success" th:if="${param.registered}">Registration successful. Please login.</div>
+            <div class="alert alert-danger" th:if="${param.error}">Invalid email or password.</div>
+            <div class="alert alert-info" th:if="${param.logout}">You have been logged out.</div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="username" class="form-control" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary-custom w-100">Sign In</button>
+            </form>
+
+            <p class="text-center mt-3 small">
+                No account? <a th:href="@{/register}">Register here</a>
+            </p>
+
+            <hr>
+            <p class="small text-muted mb-1"><strong>Demo logins:</strong></p>
+            <ul class="small text-muted mb-0">
+                <li>Admin: admin@realestate.com / admin123</li>
+                <li>Agent: agent@realestate.com / agent123</li>
+                <li>Customer: customer@realestate.com / customer123</li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

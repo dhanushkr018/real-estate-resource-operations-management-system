@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Property Details')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container my-4">
+    <div class="row g-4">
+        <div class="col-md-7">
+            <img th:src="${property.imageUrl}" class="img-fluid rounded-4 shadow-sm w-100" style="max-height:420px;object-fit:cover;">
+        </div>
+        <div class="col-md-5">
+            <h3 class="fw-bold" th:text="${property.title}"></h3>
+            <p class="text-muted"><i class="fa-solid fa-location-dot me-1"></i><span th:text="${property.location}"></span>, <span th:text="${property.city}"></span></p>
+            <h4 style="color:#1a4d2e" class="fw-bold">₹<span th:text="${#numbers.formatDecimal(property.price, 0, 'COMMA', 0, 'POINT')}"></span>
+                <span class="small text-muted" th:if="${property.purpose.name() == 'RENT'}">/ month</span>
+            </h4>
+            <p>
+                <span class="badge bg-dark me-1" th:text="${property.type}"></span>
+                <span class="badge bg-secondary me-1" th:text="${property.purpose}"></span>
+                <span class="badge bg-success" th:text="${property.status}"></span>
+            </p>
+            <div class="d-flex gap-4 my-3" th:if="${property.bedrooms} != null and ${property.bedrooms} > 0">
+                <div><i class="fa-solid fa-bed"></i> <span th:text="${property.bedrooms}"></span> Beds</div>
+                <div><i class="fa-solid fa-bath"></i> <span th:text="${property.bathrooms}"></span> Baths</div>
+                <div><i class="fa-solid fa-ruler-combined"></i> <span th:text="${property.areaSqft}"></span> sqft</div>
+            </div>
+            <p th:text="${property.description}"></p>
+            <p class="small text-muted">Listed by: <span th:text="${property.agent != null ? property.agent.fullName : 'N/A'}"></span></p>
+
+            <div class="d-flex gap-2 mt-3 flex-wrap">
+                <form th:action="@{/bookings/create/{id}(id=${property.id})}" method="post" sec:authorize="hasRole('CUSTOMER')"
+                      th:if="${property.status.name() == 'AVAILABLE'}">
+                    <button type="submit" class="btn btn-primary-custom"><i class="fa-solid fa-receipt me-1"></i> Book Now</button>
+                </form>
+
+                <a th:href="@{/properties/{id}/edit(id=${property.id})}" class="btn btn-outline-secondary" sec:authorize="hasAnyRole('ADMIN','AGENT')">
+                    <i class="fa-solid fa-pen me-1"></i> Edit
+                </a>
+                <form th:action="@{/properties/{id}/delete(id=${property.id})}" method="post" sec:authorize="hasAnyRole('ADMIN','AGENT')">
+                    <button type="submit" class="btn btn-outline-danger"><i class="fa-solid fa-trash me-1"></i> Delete</button>
+                </form>
+            </div>
+
+            <hr>
+            <div sec:authorize="hasRole('CUSTOMER')">
+                <h6 class="fw-bold">Interested? Send an inquiry</h6>
+                <form th:action="@{/leads/create/{id}(id=${property.id})}" method="post">
+                    <textarea name="message" class="form-control mb-2" placeholder="I'm interested in this property, please contact me..." required></textarea>
+                    <button class="btn btn-outline-success btn-sm" type="submit"><i class="fa-solid fa-paper-plane me-1"></i> Send Inquiry</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

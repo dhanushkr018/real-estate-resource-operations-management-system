@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Leads')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container my-4">
+    <h4 class="fw-bold mb-3">Lead / Inquiry Management</h4>
+    <div class="table-responsive">
+        <table class="table table-soft align-middle bg-white rounded-3 shadow-sm">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Property</th>
+                    <th>Customer</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th sec:authorize="hasAnyRole('ADMIN','AGENT')">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="l : ${leads}">
+                    <td th:text="${l.id}"></td>
+                    <td th:text="${l.property.title}"></td>
+                    <td th:text="${l.customer.fullName}"></td>
+                    <td th:text="${l.message}"></td>
+                    <td><span class="badge bg-info text-dark" th:text="${l.status}"></span></td>
+                    <td th:text="${#temporals.format(l.createdAt, 'dd-MMM-yyyy HH:mm')}"></td>
+                    <td sec:authorize="hasAnyRole('ADMIN','AGENT')">
+                        <form th:action="@{/leads/{id}/status(id=${l.id})}" method="post" class="d-flex gap-1">
+                            <select name="status" class="form-select form-select-sm">
+                                <option value="NEW">NEW</option>
+                                <option value="CONTACTED">CONTACTED</option>
+                                <option value="SITE_VISIT_SCHEDULED">SITE_VISIT_SCHEDULED</option>
+                                <option value="CLOSED">CLOSED</option>
+                                <option value="REJECTED">REJECTED</option>
+                            </select>
+                            <button class="btn btn-sm btn-outline-success">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${leads.isEmpty()}">
+                    <td colspan="7" class="text-center text-muted">No leads yet.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

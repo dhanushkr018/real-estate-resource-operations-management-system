@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Property Form')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+
+<div class="container my-4">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+            <h4 class="fw-bold mb-3" th:text="${property.id} != null ? 'Edit Property' : 'Add New Property'"></h4>
+
+            <form th:action="${property.id} != null ? @{/properties/{id}(id=${property.id})} : @{/properties}" th:object="${property}" method="post">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Title</label>
+                        <input type="text" th:field="*{title}" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">City</label>
+                        <input type="text" th:field="*{city}" class="form-control" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Location / Locality</label>
+                        <input type="text" th:field="*{location}" class="form-control" required>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Description</label>
+                        <textarea th:field="*{description}" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Type</label>
+                        <select th:field="*{type}" class="form-select">
+                            <option th:each="t : ${types}" th:value="${t}" th:text="${t}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Purpose</label>
+                        <select th:field="*{purpose}" class="form-select">
+                            <option th:each="p : ${purposes}" th:value="${p}" th:text="${p}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <select th:field="*{status}" class="form-select">
+                            <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Price (₹)</label>
+                        <input type="number" step="0.01" th:field="*{price}" class="form-control" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Bedrooms</label>
+                        <input type="number" th:field="*{bedrooms}" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Bathrooms</label>
+                        <input type="number" th:field="*{bathrooms}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Area (sqft)</label>
+                        <input type="number" step="0.1" th:field="*{areaSqft}" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Image URL</label>
+                        <input type="text" th:field="*{imageUrl}" class="form-control" placeholder="https://...">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom mt-4"><i class="fa-solid fa-floppy-disk me-1"></i> Save Property</button>
+                <a href="/properties" class="btn btn-outline-secondary mt-4">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
