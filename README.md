@@ -2,7 +2,7 @@
 
 
 
-A full-stack Java web application built with \*\*Spring Boot\*\*, \*\*Spring Security\*\*, \*\*Spring Data JPA\*\*, and \*\*Thymeleaf\*\* to manage real estate properties, bookings, leads, and operations across multiple user roles — Admin, Agent, and Customer.
+A full-stack Java application for managing real estate listings, bookings, and customer leads — built with Spring Boot, Spring Security, Spring Data JPA, and Thymeleaf, following a clean layered MVC architecture with role-based access control.
 
 
 
@@ -10,23 +10,11 @@ A full-stack Java web application built with \*\*Spring Boot\*\*, \*\*Spring Sec
 
 
 
-\## Features
+\## Overview
 
 
 
-\- \*\*Role-based Access Control\*\* — Admin, Agent, and Customer roles with distinct permissions
-
-\- \*\*Property Management\*\* — Add, edit, delete, search, and list residential/commercial/land properties for sale or rent
-
-\- \*\*Booking Management\*\* — Customers can book available properties; agents/admins confirm, cancel, or complete bookings with automatic property status sync
-
-\- \*\*Lead/Inquiry Management\*\* — Customers send inquiries on properties; agents track and update lead status through the sales pipeline
-
-\- \*\*Role-based Dashboard\*\* — Live stats on properties, bookings, leads, and users
-
-\- \*\*Secure Authentication\*\* — Spring Security with BCrypt password hashing, session-based login
-
-\- \*\*Clean Layered Architecture\*\* — Controller → Service (interface + impl) → Repository → Entity, with DTOs and centralized exception handling
+This system models a real-world property management workflow involving three user roles — \*\*Admin\*\*, \*\*Agent\*\*, and \*\*Customer\*\* — each with scoped access to listings, bookings, and lead pipelines. It covers the full lifecycle of a property: from listing, to customer inquiry, to booking, to final sale or rental closure.
 
 
 
@@ -44,15 +32,15 @@ A full-stack Java web application built with \*\*Spring Boot\*\*, \*\*Spring Sec
 
 | Language | Java 17 |
 
-| Backend Framework | Spring Boot 3.2.5 |
+| Framework | Spring Boot 3.2.5 |
 
-| Security | Spring Security 6 (BCrypt, role-based auth) |
+| Security | Spring Security 6 — BCrypt hashing, session-based, role-based authorization |
 
-| Data Access | Spring Data JPA / Hibernate |
+| Persistence | Spring Data JPA / Hibernate |
 
-| Database | H2 (in-memory, zero-config) |
+| Database | H2 (in-memory, auto-seeded — zero setup required) |
 
-| Frontend | Thymeleaf, Bootstrap 5, Font Awesome |
+| View Layer | Thymeleaf, Bootstrap 5, Font Awesome |
 
 | Build Tool | Maven |
 
@@ -65,35 +53,40 @@ A full-stack Java web application built with \*\*Spring Boot\*\*, \*\*Spring Sec
 
 
 \## Architecture
-Controller  →  Service (interface + impl)  →  Repository (Spring Data JPA)  →  Entity
 
 
 
-↓
+A standard layered architecture separates concerns across the request lifecycle:
+
+Controller  →  Service (interface + implementation)  →  Repository  →  Entity
 
 
 
-DTOs for request binding
+\- \*\*Controllers\*\* handle HTTP requests and delegate to services — no business logic lives here
+
+\- \*\*Services\*\* contain business rules (e.g. booking status cascading to property status)
+
+\- \*\*Repositories\*\* use Spring Data JPA for data access, with derived query methods
+
+\- \*\*DTOs\*\* decouple form/request binding from persistence entities
+
+\- \*\*GlobalExceptionHandler\*\* provides centralized error handling across the app
 
 
 
-↓
+\### Entity Relationships
 
 
 
-GlobalExceptionHandler for centralized error handling
+\- `User` (1) — (N) `Property` — an agent owns multiple listings
 
-### Core Entities \& Relationships
+\- `Property` (1) — (N) `Booking`
 
-\- \*\*User\*\* (1) — (N) \*\*Property\*\* \*(agent owns properties)\*
+\- `Property` (1) — (N) `Lead`
 
-\- \*\*Property\*\* (1) — (N) \*\*Booking\*\*
+\- `User` (1) — (N) `Booking` — as customer
 
-\- \*\*Property\*\* (1) — (N) \*\*Lead\*\*
-
-\- \*\*User\*\* (1) — (N) \*\*Booking\*\* \*(customer)\*
-
-\- \*\*User\*\* (1) — (N) \*\*Lead\*\* \*(customer)\*
+\- `User` (1) — (N) `Lead` — as customer
 
 
 
@@ -101,7 +94,43 @@ GlobalExceptionHandler for centralized error handling
 
 
 
-\## ⚙️ Getting Started
+\## Core Modules
+
+
+
+\### Property Management
+
+Full CRUD for property listings (Admin/Agent), with search by title or city. Each property moves through a defined status lifecycle:
+
+AVAILABLE → BOOKED → SOLD / RENTED
+
+
+
+\### Booking Management
+
+Customers book available properties. The system automatically locks the property to `BOOKED` on creation, and Agents/Admins can confirm (cascading the property to `SOLD` or `RENTED`), cancel (reverting it to `AVAILABLE`), or mark a booking as completed.
+
+
+
+\### Lead \& Inquiry Management
+
+Customers submit inquiries directly from a property listing. Agents track and progress each lead through a sales pipeline:
+
+NEW → CONTACTED → SITE\_VISIT\_SCHEDULED → CLOSED / REJECTED
+
+
+
+\### Role-Based Dashboard
+
+Each role sees a tailored dashboard — Admins get system-wide stats (users, properties, bookings, leads), Agents see their own listings and incoming leads, and Customers see their own bookings.
+
+
+
+\---
+
+
+
+\## Getting Started
 
 
 
@@ -131,29 +160,23 @@ mvn spring-boot:run
 
 
 
-Application runs at: \*\*http://localhost:8080\*\*
+The application starts at \*\*http://localhost:8080\*\*. No external database configuration is needed — an in-memory H2 database is auto-seeded with demo users and properties on every startup.
 
 
 
-No external database setup required — uses an in-memory H2 database, auto-seeded with demo data on startup.
+\### H2 Console
 
-
-
-\### H2 Console (optional)
+For inspecting the live database during a demo:
 
 \- URL: `http://localhost:8080/h2-console`
 
 \- JDBC URL: `jdbc:h2:mem:realestatedb`
 
-\- Username: `sa` / Password: \*(blank)\*
+\- Username: `sa` — Password: \*(leave blank)\*
 
 
 
-\---
-
-
-
-\## Demo Credentials
+\### Demo Credentials
 
 
 
@@ -173,41 +196,55 @@ No external database setup required — uses an in-memory H2 database, auto-seed
 
 
 
-\## 📋 Module Overview
+\## Project Structure
+
+src/main/java/com/realestate
 
 
 
-\### Property Management
-
-\- CRUD operations for properties (Admin/Agent)
-
-\- Search by title or city
-
-\- Status lifecycle: `AVAILABLE → BOOKED → SOLD / RENTED`
+├── config/          → Security configuration, custom UserDetailsService, data seeder
 
 
 
-\### Booking Management
-
-\- Customers book available properties
-
-\- Property auto-locks to `BOOKED` on booking creation
-
-\- Agent/Admin confirms (→ `SOLD`/`RENTED`), cancels (→ back to `AVAILABLE`), or completes booking
+├── controller/       → MVC controllers (Auth, Property, Booking, Lead, Dashboard)
 
 
 
-\### Lead/Inquiry Management
-
-\- Customers submit inquiries on property listings
-
-\- Agents track leads through pipeline: `NEW → CONTACTED → SITE\_VISIT\_SCHEDULED → CLOSED / REJECTED`
+├── dto/              → Request DTOs
 
 
 
-\### Dashboard
+├── entity/           → JPA entities and enums
 
-\- Role-specific live statistics (total properties, bookings, leads, users)
+
+
+├── repository/       → Spring Data JPA repositories
+
+
+
+├── service/          → Service interfaces
+
+
+
+│    └── impl/        → Service implementations
+
+
+
+└── exception/        → Custom exceptions and global error handler
+
+src/main/resources
+
+
+
+├── templates/        → Thymeleaf views
+
+
+
+├── static/css/       → Custom styling
+
+
+
+└── application.yml   → Application and database configuration
 
 
 
@@ -215,71 +252,35 @@ No external database setup required — uses an in-memory H2 database, auto-seed
 
 
 
-\## Project Structure
-src/main/java/com/realestate
+\## Design Decisions
 
 
 
-├── config/        → Security config, custom UserDetailsService, data seeder
+\- \*\*H2 over a production database\*\* — chosen deliberately for this demo to keep setup frictionless; the JPA layer is database-agnostic, so swapping to MySQL/PostgreSQL only requires a connection string change in `application.yml`.
+
+\- \*\*Session-based auth over JWT\*\* — appropriate for a server-rendered Thymeleaf app; a stateless JWT layer is a natural extension if the frontend were decoupled into a SPA.
+
+\- \*\*Status cascading in the service layer, not controllers\*\* — keeps business rules (e.g. a confirmed booking locking a property) testable and independent of the web layer.
 
 
 
-├── controller/     → MVC controllers (Auth, Property, Booking, Lead, Dashboard)
-
-
-
-├── dto/            → Request DTOs
-
-
-
-├── entity/         → JPA entities and enums
-
-
-
-├── repository/     → Spring Data JPA repositories
-
-
-
-├── service/        → Service interfaces
-
-
-
-│    └── impl/      → Service implementations
-
-
-
-└── exception/      → Custom exceptions and global handler
-
-src/main/resources
-
-
-
-├── templates/      → Thymeleaf views (Bootstrap-based UI)
-
-
-
-├── static/css/     → Custom styling
-
-
-
-└── application.yml → App + DB configuration
-
-
----
+\---
 
 
 
 \## Future Enhancements
 
-\- JWT-based REST API for a decoupled SPA frontend (React/Angular)
+
+
+\- JWT-secured REST API to support a decoupled React/Angular frontend
 
 \- Payment gateway integration for booking deposits
 
-\- Document/image upload (property docs, KYC) with cloud storage
+\- Document and image upload for property listings and KYC verification
 
-\- Email/SMS notifications for booking and lead status changes
+\- Email/SMS notifications on booking and lead status changes
 
-\- Advanced filtering (price range, bedrooms, property type) and pagination
+\- Advanced filtering (price range, bedrooms, property type) with pagination
 
 
 
@@ -289,5 +290,11 @@ src/main/resources
 
 \## Author
 
+
+
+\*\*Dhanush K R\*\*
+
 Built as a demonstration project for a Java Full Stack Developer role, showcasing Spring Boot, Spring Security, JPA, and Thymeleaf in a layered MVC architecture.
+
+
 
