@@ -73,3 +73,4 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.save(booking);
     }
 }
+// booking created above the Booking booking = Booking.builder()
