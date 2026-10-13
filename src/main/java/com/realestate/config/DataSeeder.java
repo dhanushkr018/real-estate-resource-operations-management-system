@@ -114,7 +114,7 @@ public class DataSeeder implements CommandLineRunner {
                 .build());
 
         System.out.println("=================================================");
-        System.out.println(" Demo data loaded. Login credentials:");
+        System.out.println(" Demo data loaded successfully. Login credentials:");
         System.out.println(" ADMIN    -> admin@realestate.com / admin123");
         System.out.println(" AGENT    -> agent@realestate.com / agent123");
         System.out.println(" CUSTOMER -> customer@realestate.com / customer123");
