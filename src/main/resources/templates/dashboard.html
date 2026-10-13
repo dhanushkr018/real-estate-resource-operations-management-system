@@ -7,7 +7,11 @@
 <div class="hero">
     <div class="container">
         <h2 class="fw-bold">Welcome, <span th:text="${currentUser.fullName}"></span> 👋</h2>
-        <p class="mb-0">Role: <span th:text="${currentUser.role}"></span> &middot; Real Estate Resource &amp; Operations Management System</p>
+        <p class="mb-0">
+    Role: <span th:text="${currentUser.role}"></span>
+    &middot; Real Estate Resource &amp; Operations Management System
+    <span class="badge bg-success ms-2">Green CI Test</span>
+</p>
     </div>
 </div>
 
