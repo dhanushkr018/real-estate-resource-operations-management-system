@@ -62,7 +62,8 @@ public class PropertyServiceImpl implements PropertyService {
     @Transactional(readOnly = true)
     public List<Property> search(String keyword) {
         if (keyword == null || keyword.isBlank()) return getAll();
-        return propertyRepository.findByTitleContainingIgnoreCaseOrCityContainingIgnoreCase(keyword, keyword);
+        String term = keyword.trim();   
+        return propertyRepository.findByTitleContainingIgnoreCaseOrCityContainingIgnoreCase(term, term);
     }
 
     @Override
