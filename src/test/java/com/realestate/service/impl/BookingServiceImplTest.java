@@ -109,4 +109,26 @@ class BookingServiceImplTest {
         when(bookingRepository.findById(9L)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> service.updateStatus(9L, BookingStatus.CONFIRMED));
     }
+@Test
+void updateStatus_cancelledBookingSavesUpdatedStatus() {
+    Property property = mock(Property.class);
+
+    Booking booking = Booking.builder()
+            .property(property)
+            .status(BookingStatus.PENDING)
+            .build();
+
+    when(bookingRepository.findById(10L))
+            .thenReturn(Optional.of(booking));
+
+    when(bookingRepository.save(booking))
+            .thenReturn(booking);
+
+    Booking result = service.updateStatus(10L, BookingStatus.CANCELLED);
+
+    assertEquals(BookingStatus.CANCELLED, result.getStatus());
+
+    verify(bookingRepository).save(booking);
+    verify(property).setStatus(PropertyStatus.AVAILABLE);
+}
 }
