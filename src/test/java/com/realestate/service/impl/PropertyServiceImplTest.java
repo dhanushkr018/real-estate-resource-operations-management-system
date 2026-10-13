@@ -49,6 +49,21 @@ class PropertyServiceImplTest {
                 .thenReturn(found);
         assertSame(found, service.search("pune"));
     }
+    
+@Test
+void search_trimsKeywordBeforeSearching() {
+    List<Property> found = List.of(mock(Property.class));
+
+    when(propertyRepository
+            .findByTitleContainingIgnoreCaseOrCityContainingIgnoreCase("pune", "pune"))
+            .thenReturn(found);
+
+    assertSame(found, service.search("  pune  "));
+
+    verify(propertyRepository)
+            .findByTitleContainingIgnoreCaseOrCityContainingIgnoreCase("pune", "pune");
+}
+
 
     @Test
     void update_copiesFieldsOntoExistingProperty() {
